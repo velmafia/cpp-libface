@@ -237,26 +237,6 @@ file_size(const char *path) {
     return sbuf.st_size;
 }
 
-// TODO: Fix for > 2GiB memory usage by using uint64_t
-int
-get_memory_usage(pid_t pid) {
-    char cbuff[4096];
-    sprintf(cbuff, "pmap -x %d | tail -n +3 | awk 'BEGIN { S=0;T=0 } { if (match($3, /\\-/)) {S=1} if (S==0) {T+=$3} } END { print T }'", pid);
-    FILE *pf = popen(cbuff, "r");
-    if (!pf) {
-        return -1;
-    }
-    int r = fread(cbuff, 1, 100, pf);
-    if (r < 0) {
-        fclose(pf);
-        return -1;
-    }
-    cbuff[r-1] = '\0';
-    r = atoi(cbuff);
-    fclose(pf);
-    return r;
-}
-
 char
 to_lowercase(char c) {
     return std::tolower(c);
@@ -281,39 +261,6 @@ hex2dec(unsigned char ch) {
 
 #undef BOUNDED_RETURN
 
-std::string
-unescape_query(std::string const &query) {
-    enum {
-        QP_DEFAULT = 0,
-        QP_ESCAPED1 = 1,
-        QP_ESCAPED2 = 2
-    };
-    std::string ret;
-    unsigned char echar = 0;
-    int state = QP_DEFAULT;
-    for (size_t i = 0; i < query.size(); ++i) {
-        switch (state) {
-        case QP_DEFAULT:
-            if (query[i] != '%') {
-                ret += query[i];
-            } else {
-                state = QP_ESCAPED1;
-                echar = 0;
-            }
-            break;
-        case QP_ESCAPED1:
-        case QP_ESCAPED2:
-            echar *= 16;
-            echar += hex2dec(query[i]);
-            if (state == QP_ESCAPED2) {
-                ret += echar;
-            }
-            state = (state + 1) % 3;
-        }
-    }
-    return ret;
-}
-
 inline std::string
 uint_to_string(uint_t n, uint_t pad = 0) {
     std::string ret;
@@ -331,35 +278,6 @@ uint_to_string(uint_t n, uint_t pad = 0) {
     }
 
     return ret;
-}
-
-void
-escape_special_chars(std::string& str) {
-    std::string ret;
-    ret.reserve(str.size() + 10);
-    for (size_t j = 0; j < str.size(); ++j) {
-        switch (str[j]) {
-        case '"':
-            ret += "\\\"";
-            break;
-
-        case '\\':
-            ret += "\\\\";
-            break;
-
-        case '\n':
-            ret += "\\n";
-            break;
-
-        case '\t':
-            ret += "\\t";
-            break;
-
-        default:
-            ret += str[j];
-        }
-    }
-    ret.swap(str);
 }
 
 std::string
@@ -407,50 +325,6 @@ results_json(std::string q, vp_t& suggestions, std::string const& type) {
 std::string
 pluralize(std::string s, int n) {
     return n>1 ? s+"s" : s;
-}
-
-std::string
-humanized_time_difference(time_t prev, time_t curr) {
-    std::string ret = "";
-    if (prev > curr) {
-        std::swap(prev, curr);
-    }
-
-    if (prev == curr) {
-        return "just now";
-    }
-
-    int sec = curr - prev;
-    ret = uint_to_string(sec % 60, 2) + ret;
-
-    int minute = sec / 60;
-    ret = uint_to_string(minute % 60, 2) + ":" + ret;
-
-    int hour = minute / 60;
-    ret = uint_to_string(hour % 24, 2) + ":" + ret;
-
-    int day = hour / 24;
-    if (day) {
-        ret = uint_to_string(day % 7) + pluralize(" day", day%7) + " " + ret;
-    }
-
-    int week = day / 7;
-    if (week) {
-        ret = uint_to_string(week % 4) + pluralize(" day", week%4) + " " + ret;
-    }
-
-    int month = week / 4;
-    if (month) {
-        ret = uint_to_string(month) + pluralize(" month", month) + " " + ret;
-    }
-
-    return ret;
-}
-
-
-std::string
-get_uptime() {
-    return humanized_time_difference(started_at, time(NULL));
 }
 
 bool is_EOF(FILE *pf) { return feof(pf); }
@@ -622,36 +496,6 @@ static void handle_import(client_t *client, parsed_url_t &url) {
     }
 }
 
-static void handle_export(client_t *client, parsed_url_t &url) {
-    std::string body;
-    headers_t headers;
-    headers["Cache-Control"] = "no-cache";
-
-    std::string file = url.query["file"];
-    if (building) {
-        body = "Busy\n";
-        write_response(client, 412, "Busy", headers, body);
-        return;
-    }
-
-    // Prevent modifications to 'pm' while we export
-    building = true;
-    ofstream fout(file.c_str());
-    const time_t start_time = time(NULL);
-
-    for (size_t i = 0; i < pm.repr.size(); ++i) {
-        fout<<pm.repr[i].weight<<'\t'<<pm.repr[i].phrase<<'\t'<<std::string(pm.repr[i].snippet)<<'\n';
-    }
-
-    building = false;
-    std::ostringstream os;
-    os << "Successfully wrote " << pm.repr.size()
-       << " records to output file '" << file
-       << "' in " << (time(NULL) - start_time) << "second(s)\n";
-    body = os.str();
-    write_response(client, 200, "OK", headers, body);
-}
-
 static void handle_suggest(client_t *client, parsed_url_t &url) {
     ++nreq;
     std::string body;
@@ -697,124 +541,6 @@ static void handle_suggest(client_t *client, parsed_url_t &url) {
 
     write_response(client, 200, "OK", headers, body);
 }
-
-static void handle_stats(client_t *client, parsed_url_t &url) {
-    headers_t headers;
-    headers["Cache-Control"] = "no-cache";
-
-    std::string body;
-    char buff[2048];
-    char *b = buff;
-    b += sprintf(b, "Answered %lu queries\n", nreq);
-    b += sprintf(b, "Uptime: %s\n", get_uptime().c_str());
-
-    if (building) {
-        b += sprintf(b, "Data Store is busy\n");
-    }
-    else {
-        b += sprintf(b, "Data store size: %d entries\n", pm.repr.size());
-    }
-    b += sprintf(b, "Memory usage: %d MiB\n", get_memory_usage(getpid())/1024);
-    body = buff;
-    write_response(client, 200, "OK", headers, body);
-}
-
-static void handle_invalid_request(client_t *client, parsed_url_t &url) {
-    headers_t headers;
-    headers["Cache-Control"] = "no-cache";
-
-    std::string body = "Sorry, but the page you requested could not be found\n";
-    write_response(client, 404, "Not Found", headers, body);
-}
-
-
-void serve_request(client_t *client) {
-    parsed_url_t url;
-    parse_URL(client->url, url);
-    std::string &request_uri = url.path;
-    DCERR("request_uri: " << request_uri << endl);
-
-    if (request_uri == "/face/suggest/") {
-        handle_suggest(client, url);
-    }
-    else if (request_uri == "/face/import/") {
-        handle_import(client, url);
-    }
-    else if (request_uri == "/face/export/") {
-        handle_export(client, url);
-    }
-    else if (request_uri == "/face/stats/") {
-        handle_stats(client, url);
-    }
-    else {
-        handle_invalid_request(client, url);
-    }
-}
-
-
-void
-show_usage(char *argv[]) {
-    printf("Usage: %s [OPTION]...\n", basename(argv[0]));
-    printf("Start lib-face.\n\n");
-    printf("Optional arguments:\n\n");
-    printf("-h, --help           This screen\n");
-    printf("-f, --file=PATH      Path of the file containing the phrases\n");
-    printf("-p, --port=PORT      TCP port on which to start lib-face (default: 6767)\n");
-    printf("-l, --limit=LIMIT    Load only the first LIMIT lines from PATH (default: -1 [unlimited])\n");
-    printf("\n");
-    printf("Please visit %s for more information.\n", project_homepage_url);
-}
-
-void
-parse_options(int argc, char *argv[]) {
-    int c;
-
-    while (1) {
-        int option_index = 0;
-        static struct option long_options[] = {
-            {"file", 1, 0, 'f'},
-            {"port", 1, 0, 'p'},
-            {"limit", 1, 0, 'l'},
-            {"help", 0, 0, 'h'},
-            {0, 0, 0, 0}
-        };
-
-        c = getopt_long(argc, argv, "f:p:l:h",
-                        long_options, &option_index);
-
-        if (c == -1)
-            break;
-
-        switch (c) {
-        case 0:
-        case 'f':
-            DCERR("File: "<<optarg<<endl);
-            ac_file = optarg;
-            break;
-
-        case 'p':
-            DCERR("Port: "<<optarg<<" ("<<atoi(optarg)<<")\n");
-            port = atoi(optarg);
-            break;
-
-        case 'h':
-            opt_show_help = true;
-            break;
-
-        case 'l':
-            line_limit = atoi(optarg);
-            DCERR("Limit # of lines to: " << line_limit << endl);
-            break;
-
-        case '?':
-            cerr<<"ERROR::Invalid option: "<<optopt<<endl;
-            break;
-        }
-    }
-
-
-}
-
 
 int
 main(int argc, char* argv[]) {
