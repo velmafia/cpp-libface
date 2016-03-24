@@ -2,20 +2,34 @@
 // C-headers
 #include <stdio.h>
 #include <string.h>
+
+#ifdef __linux__ 
 #include <unistd.h>
+#elif _WIN32
+#include <io.h>
+#else
+// bump
+#endif
+
 #include <stdlib.h>
 #include <time.h>
-#include <getopt.h>
-#include <libgen.h>
+//#include <libgen.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+#ifdef __linux__ 
 #include <sys/mman.h>
+#elif _WIN32
+#include <mman-win32/mman.h>
+#else
+// bump
+#endif
+
 #include <assert.h>
 #include <fcntl.h>
 
 
 // Custom-includes
-#include <include/httpserver.hpp>
 #include <include/segtree.hpp>
 #include <include/sparsetable.hpp>
 #include <include/benderrmq.hpp>
@@ -28,6 +42,7 @@
 #include <string>
 #include <fstream>
 #include <algorithm>
+#include <cctype>
 
 #if !defined NMAX
 #define NMAX 32
@@ -281,48 +296,6 @@ uint_to_string(uint_t n, uint_t pad = 0) {
 }
 
 std::string
-rich_suggestions_json_array(vp_t& suggestions) {
-    std::string ret = "[";
-    ret.reserve(OUTPUT_SIZE_RESERVE);
-    for (vp_t::iterator i = suggestions.begin(); i != suggestions.end(); ++i) {
-        escape_special_chars(i->phrase);
-        std::string snippet = i->snippet;
-        escape_special_chars(snippet);
-
-        std::string trailer = i + 1 == suggestions.end() ? "\n" : ",\n";
-        ret += " { \"phrase\": \"" + i->phrase + "\", \"score\": " + uint_to_string(i->weight) + 
-            (snippet.empty() ? "" : ", \"snippet\": \"" + snippet + "\"") + " }" + trailer;
-    }
-    ret += "]";
-    return ret;
-}
-
-std::string
-suggestions_json_array(vp_t& suggestions) {
-    std::string ret = "[";
-    ret.reserve(OUTPUT_SIZE_RESERVE);
-    for (vp_t::iterator i = suggestions.begin(); i != suggestions.end(); ++i) {
-        escape_special_chars(i->phrase);
-
-        std::string trailer = i + 1 == suggestions.end() ? "\n" : ",\n";
-        ret += "\"" + i->phrase + "\"" + trailer;
-    }
-    ret += "]";
-    return ret;
-}
-
-std::string
-results_json(std::string q, vp_t& suggestions, std::string const& type) {
-    if (type == "list") {
-        escape_special_chars(q);
-        return "[ \"" + q + "\", " + suggestions_json_array(suggestions) + " ]";
-    }
-    else {
-        return rich_suggestions_json_array(suggestions);
-    }
-}
-
-std::string
 pluralize(std::string s, int n) {
     return n>1 ? s+"s" : s;
 }
@@ -448,112 +421,17 @@ do_import(std::string file, uint_t limit,
     return 0;
 }
 
-static void handle_import(client_t *client, parsed_url_t &url) {
-    std::string body;
-    headers_t headers;
-    headers["Cache-Control"] = "no-cache";
-
-    std::string file = unescape_query(url.query["file"]);
-    uint_t limit     = atoi(url.query["limit"].c_str());
-    int nadded, nlines;
-    const time_t start_time = time(NULL);
-
-    if (!limit) {
-        limit = minus_one;
-    }
-
-    int ret = do_import(file, limit, nadded, nlines);
-    if (ret < 0) {
-        switch (-ret) {
-        case IMPORT_FILE_NOT_FOUND:
-            body = "The file '" + file + "' was not found";
-            write_response(client, 404, "Not Found", headers, body);
-            break;
-
-        case IMPORT_MUNMAP_FAILED:
-            body = "munmap(2) failed";
-            write_response(client, 500, "Internal Server Error", headers, body);
-            break;
-
-        case IMPORT_MMAP_FAILED:
-            body = "mmap(2) failed";
-            write_response(client, 500, "Internal Server Error", headers, body);
-            break;
-
-        default:
-            body = "Unknown Error";
-            write_response(client, 500, "Internal Server Error", headers, body);
-            cerr<<"ERROR::Unknown error: "<<ret<<endl;
-        }
-    }
-    else {
-        std::ostringstream os;
-        os << "Successfully added " << nadded << "/" << nlines
-           << "records from '" << file << "' in " << (time(NULL) - start_time)
-           << "second(s)\n";
-        body = os.str();
-        write_response(client, 200, "OK", headers, body);
-    }
-}
-
-static void handle_suggest(client_t *client, parsed_url_t &url) {
-    ++nreq;
-    std::string body;
-    headers_t headers;
-    headers["Cache-Control"] = "no-cache";
-
-    if (building) {
-        write_response(client, 412, "Busy", headers, body);
-        return;
-    }
-
-    std::string q    = unescape_query(url.query["q"]);
-    std::string sn   = url.query["n"];
-    std::string cb   = unescape_query(url.query["callback"]);
-    std::string type = unescape_query(url.query["type"]);
-
-    DCERR("handle_suggest::q:"<<q<<", sn:"<<sn<<", callback: "<<cb<<endl);
-
-    unsigned int n = sn.empty() ? NMAX : atoi(sn.c_str());
-    if (n > NMAX) {
-        n = NMAX;
-    }
-    if (n < 1) {
-        n = 1;
-    }
-
-    const bool has_cb = !cb.empty();
-    str_lowercase(q);
-    vp_t results = suggest(pm, st, q, n);
-
-    /*
-      for (size_t i = 0; i < results.size(); ++i) {
-      mg_printf(conn, "%s:%d\n", results[i].first.c_str(), results[i].second);
-      }
-    */
-    headers["Content-Type"] = "text/plain; charset=UTF-8";
-    if (has_cb) {
-        body = cb + "(" + results_json(q, results, type) + ");\n";
-    }
-    else {
-        body = results_json(q, results, type) + "\n";
-    }
-
-    write_response(client, 200, "OK", headers, body);
-}
-
 int
 main(int argc, char* argv[]) {
-    parse_options(argc, argv);
-    if (opt_show_help) {
-        show_usage(argv);
-        return 0;
-    }
-
     started_at = time(NULL);
 
-    cerr<<"INFO::Starting lib-face on port '"<<port<<"'\n";
-
+    if (argc < 2) {
+        fprintf(stderr, "Filepath should be in the arguments");
+        return -1;
+    }
+    
+    ac_file = argv[1];
+    
     if (ac_file) {
         int nadded, nlines;
         const time_t start_time = time(NULL);
@@ -583,10 +461,14 @@ main(int argc, char* argv[]) {
         }
     }
 
-    int r = httpserver_start(&serve_request, "0.0.0.0", port);
-    if (r != 0) {
-        fprintf(stderr, "ERROR::Could not start the web server\n");
-        return 1;
+    int n = 16;
+    std::string q = "test";
+    vp_t results = suggest(pm, st, q, n);
+
+    int size = results.size();
+    for (int i = 0; i < size; ++i) {
+        std::cout << results[i].phrase << std::endl;
     }
+    
     return 0;
 }
