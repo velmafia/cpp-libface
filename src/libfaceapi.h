@@ -3,7 +3,7 @@
 
 #include "defines.h"
 
-class LIBFACE_DLL_EXPORTED FaceAPIHost
+class LIBFACE_DLL_EXPORTED FaceMask
 {
     
 };

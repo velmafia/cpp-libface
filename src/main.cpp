@@ -425,8 +425,8 @@ int
 main(int argc, char* argv[]) {
     started_at = time(NULL);
 
-    if (argc < 2) {
-        fprintf(stderr, "Filepath should be in the arguments");
+    if (argc < 3) {
+        fprintf(stderr, "Filepath and word must be in the arguments");
         return -1;
     }
     
@@ -461,8 +461,8 @@ main(int argc, char* argv[]) {
         }
     }
 
-    int n = 16;
-    std::string q = "test";
+    int n = 32;
+    std::string q = argv[2];
     vp_t results = suggest(pm, st, q, n);
 
     int size = results.size();
