@@ -5,7 +5,7 @@ INCDEPS=        include/segtree.hpp include/sparsetable.hpp include/benderrmq.hp
                 include/utils.hpp
 INCDIRS=        -I . -I deps -I mman-win32
 LIBFACEDEPS=    src/parser.hpp src/defines.hpp src/libfaceapi.hpp
-SOURCES=        src/main.cpp src/libfaceapi.cpp include/benderrmq.cpp include/phrase_map.cpp include/segtree.cpp include/sparsetable.cpp
+SOURCES=        src/libfaceapi.cpp include/benderrmq.cpp include/phrase_map.cpp include/segtree.cpp include/sparsetable.cpp
 OBJDEPS=        mman-win32/Debug/mman.lib
 
 .PHONY: all clean debug test perf
@@ -26,7 +26,7 @@ perf:
 targets: lib-face
 
 lib-face: $(SOURCES) $(LIBFACEDEPS) $(OBJDEPS) $(INCDEPS)
-	$(CXX) $(SOURCES) $(OBJDEPS) $(INCDIRS) $(CXXFLAGS) $(LINKFLAGS) -o main
+	$(CXX) -c $(SOURCES) $(OBJDEPS) $(INCDIRS) $(CXXFLAGS) $(LINKFLAGS)
 
 test:
 	$(CXX) -o tests/containers tests/containers.cpp -I . $(CXXFLAGS)

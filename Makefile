@@ -5,7 +5,7 @@ INCDEPS=        include/segtree.hpp include/sparsetable.hpp include/benderrmq.hp
                 include/utils.hpp
 INCDIRS=        -I . -I deps -I
 LIBFACEDEPS=    src/parser.hpp src/defines.hpp src/libfaceapi.hpp
-SOURCES=        src/main.cpp src/libfaceapi.cpp include/benderrmq.cpp include/phrase_map.cpp include/segtree.cpp include/sparsetable.cpp
+SOURCES=        src/libfaceapi.cpp include/benderrmq.cpp include/phrase_map.cpp include/segtree.cpp include/sparsetable.cpp
 
 .PHONY: all clean debug test perf
 
@@ -22,10 +22,14 @@ test:
 perf:
 	CXXFLAGS = $(CXXFLAGS) -O2
 
-targets: lib-face
+targets: lib-face main
 
 lib-face: $(SOURCES) $(LIBFACEDEPS) $(OBJDEPS) $(INCDEPS)
-	$(CXX) $(SOURCES) $(INCDIRS) $(CXXFLAGS) $(LINKFLAGS) -o main
+	$(CXX) -c $(SOURCES) $(INCDIRS) $(CXXFLAGS) $(LINKFLAGS)
+	ar rcs libface.a libfaceapi.o benderrmq.o phrase_map.o segtree.o sparsetable.o
+
+main: lib-face src/main.cpp
+	$(CXX) -L. -lface src/main.cpp $(INCDIRS) $(CXXFLAGS) -o main
 
 test:
 	$(CXX) -o tests/containers tests/containers.cpp -I . $(CXXFLAGS)
