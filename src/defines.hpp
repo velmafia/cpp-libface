@@ -1,5 +1,5 @@
-#ifndef DEFINES
-#define DEFINES
+#ifndef DEFINES_HPP
+#define DEFINES_HPP
 
 #if defined(LIBFACE_STATIC)
 #define LIBFACE_DLL_EXPORTED
@@ -15,4 +15,4 @@
 #  define LIBFACE_DLL_EXPORTED
 #endif
 
-#endif // DEFINES
+#endif // DEFINES_HPP

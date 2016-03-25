@@ -1,4 +1,4 @@
-#if !defined LIBFACE_TYPES_HPP
+#ifndef LIBFACE_TYPES_HPP
 #define LIBFACE_TYPES_HPP
 
 #include <utility>

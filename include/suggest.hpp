@@ -1,4 +1,4 @@
-#if !defined LIBFACE_SUGGEST_HPP
+#ifndef LIBFACE_SUGGEST_HPP
 #define LIBFACE_SUGGEST_HPP
 
 #include <iostream>
