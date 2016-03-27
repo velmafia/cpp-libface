@@ -7,8 +7,12 @@ Purpose of this project is:
 
 Windows:
 
-- init git submodules, open mmap-win32 project and build it
+- `git submodules init`, `git submodules update`, open `mman-win32` project and build it
 - open Visual Studio command line for root directory or this repo
 - run `nmake -f Makefile.win lib-face` in order to build libface
+
+Linux/OS X:
+
+- run `make lib-face` in the terminal in root directory of this repo
 
 See ORIGINAL_README.md of cpp-libface.
