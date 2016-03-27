@@ -1,4 +1,4 @@
-CXXFLAGS=       -Wall $(COPT) -D_FILE_OFFSET_BITS=64
+CXXFLAGS=       -Wall $(COPT) /D_FILE_OFFSET_BITS=64 /DLIBFACE_STATIC
 LINKFLAGS=	#-lm -lrt -pthread
 INCDEPS=        include/segtree.hpp include/sparsetable.hpp include/benderrmq.hpp \
                 include/phrase_map.hpp include/suggest.hpp include/types.hpp \
@@ -27,6 +27,10 @@ targets: lib-face
 
 lib-face: $(SOURCES) $(LIBFACEDEPS) $(OBJDEPS) $(INCDEPS)
 	$(CXX) -c $(SOURCES) $(OBJDEPS) $(INCDIRS) $(CXXFLAGS) $(LINKFLAGS)
+	lib libfaceapi.obj benderrmq.obj phrase_map.obj segtree.obj sparsetable.obj -OUT:libface.lib
+
+main: lib-face src/main.cpp
+	$(CXX) libface.lib src/main.cpp $(INCDIRS) $(CXXFLAGS) $(OBJDEPS) -o main
 
 test:
 	$(CXX) -o tests/containers tests/containers.cpp -I . $(CXXFLAGS)
