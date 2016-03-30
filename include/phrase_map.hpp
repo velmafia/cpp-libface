@@ -43,6 +43,26 @@ struct PrefixFinder {
         return target.phrase < prefix;
 #endif
     }
+
+
+    // ONLY FOR DEBUG VERSION TO BUILD
+    // BUG in headers of 2012/2013 MSVS
+    // https://connect.microsoft.com/VisualStudio/feedback/details/807044/c-stdlib-comparator-debugging-breaks-compile-of-custom-comparators-in-std-equal-range-family-of-functions
+#ifdef _DEBUG
+    bool
+    operator()(phrase_t const &target, phrase_t const &prefix) {
+#if 1
+        const int ppos = target.phrase.compare(0, prefix.phrase.size(), prefix.phrase);
+        return ppos > 0;
+#else
+        const int ppos = target.phrase.find(prefix);
+        if (!ppos) {
+            return false;
+        }
+        return prefix < target.phrase;
+#endif
+    }
+#endif
 };
 
 class PhraseMap {
