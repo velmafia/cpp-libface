@@ -27,7 +27,7 @@ targets: lib-face
 
 lib-face: $(SOURCES) $(LIBFACEDEPS) $(OBJDEPS) $(INCDEPS)
 	$(CXX) -c $(SOURCES) $(OBJDEPS) $(INCDIRS) $(CXXFLAGS) $(LINKFLAGS)
-	lib libfaceapi.obj benderrmq.obj phrase_map.obj segtree.obj sparsetable.obj -OUT:libface.lib
+	lib libfaceapi.obj benderrmq.obj phrase_map.obj segtree.obj sparsetable.obj -OUT:face.lib
 
 main: lib-face src/main.cpp
 	$(CXX) libface.lib src/main.cpp $(INCDIRS) $(CXXFLAGS) $(OBJDEPS) -o main

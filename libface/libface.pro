@@ -6,13 +6,21 @@
 
 QT       -= core gui
 
-TARGET = libface
+TARGET = face
 TEMPLATE = lib
 CONFIG += staticlib
 
 DEFINES += LIBFACE_STATIC
 
+CONFIG(debug, debug|release)  {
+LIBS += -L"$$PWD/../mman-win32/Debug"
+} else {
+LIBS += -L"$$PWD/../mman-win32/Release"
+}
+LIBS += -lmman
+
 INCLUDEPATH += ../
+INCLUDEPATH += ../mman-win32/
 
 SOURCES += \
     ../src/libfaceapi.cpp \
@@ -34,6 +42,7 @@ HEADERS += \
     ../include/suggest.hpp \
     ../include/types.hpp \
     ../include/utils.hpp
+
 unix {
     target.path = /usr/lib
     INSTALLS += target
