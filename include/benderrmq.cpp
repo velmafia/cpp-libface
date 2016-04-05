@@ -125,6 +125,65 @@ toGraphViz(BinaryTreeNode* par, BinaryTreeNode *n) {
     return sout.str();
 }
 
+void LookupTables::initialize(int nbits) {
+    int ntables = 1 << nbits;
+    repr.resize(ntables);
+    std::vector<int> tmp(nbits);
+
+    for (int i = 0; i < ntables; ++i) {
+        const int start = 40;
+        int diff = 0;
+        for (int j = 0; j < nbits; ++j) {
+            const int mask = 1L << j;
+            if (i & mask) {
+                diff += 1;
+            } else {
+                diff -= 1;
+            }
+            tmp[j] = start + diff;
+        }
+
+        // Always perform a lookup with the lower index
+        // first. i.e. table[3][5] and NOT table[5][3]. Never
+        // lookup with the same index on both dimenstion (for
+        // example: table[3][3]).
+        char_array_2d_t table(nbits-1, vc_t(nbits, -1));
+
+        // Compute the lookup table for the bitmap in 'i'.
+        for (int r = 0; r < nbits-1; ++r) {
+            int maxi = r;
+            int maxv = tmp[r];
+
+            for (int c = r+1; c < nbits; ++c) {
+                if (tmp[c] > maxv) {
+                    maxv = tmp[c];
+                    maxi = c;
+                }
+                table[r][c] = maxi;
+
+            } // for(c)
+
+        } // for (r)
+
+        repr[i].swap(table);
+
+    } // for (i)
+}
+
+uint_t LookupTables::query_max(uint_t index, uint_t l, uint_t u) {
+    assert_le(l, u);
+    assert_lt(index, (uint_t)repr.size());
+    assert_lt(l, (uint_t)repr[0].size() + 1);
+    assert_lt(u, (uint_t)repr[0][0].size());
+
+    if (u == l) {
+        return u;
+    }
+
+    return repr[index][l][u];
+}
+
+
 namespace benderrmq {
 
     pui_t
@@ -186,4 +245,71 @@ namespace benderrmq {
 	printf("\n");
         return 0;
     }
+}
+
+void BenderRMQ::initialize(const vui_t &elems) {
+    len = elems.size();
+
+    if (len < MIN_SIZE_FOR_BENDER_RMQ) {
+        st.initialize(elems);
+        return;
+    }
+
+    vui_t levels;
+    SimpleFixedObjectAllocator<BinaryTreeNode> alloc(len);
+
+    euler.reserve(elems.size() * 2);
+    mapping.resize(elems.size());
+    BinaryTreeNode *root = make_cartesian_tree(elems, alloc);
+
+    DPRINTF("GraphViz (paste at: http://ashitani.jp/gv/):\n%s\n", toGraphViz(NULL, root).c_str());
+
+    euler_tour(root, euler, levels, mapping, rev_mapping);
+
+    root = NULL; // This tree has now been deleted
+    alloc.clear();
+
+    assert_eq(levels.size(), euler.size());
+    assert_eq(levels.size(), rev_mapping.size());
+
+    uint_t n = euler.size();
+    lgn_by_2 = log2(n) / 2;
+    _2n_lgn  = n / lgn_by_2 + 1;
+
+    DPRINTF("n = %u, lgn/2 = %d, 2n/lgn = %d\n", n, lgn_by_2, _2n_lgn);
+    lt.initialize(lgn_by_2);
+
+    table_map.resize(_2n_lgn);
+    vui_t reduced;
+
+    for (uint_t i = 0; i < n; i += lgn_by_2) {
+        uint_t max_in_block = euler[i];
+        int bitmap = 1L;
+        DPRINTF("Sequence: (%u, ", euler[i]);
+        for (int j = 1; j < lgn_by_2; ++j) {
+            int curr_level, prev_level;
+            uint_t value;
+            if (i+j < n) {
+                curr_level = levels[i+j];
+                prev_level = levels[i+j-1];
+                value = euler[i+j];
+            } else {
+                curr_level = 1;
+                prev_level = 0;
+                value = 0;
+            }
+
+            const uint_t bit = (curr_level < prev_level);
+            bitmap |= (bit << j);
+            max_in_block = std::max(max_in_block, value);
+            DPRINTF("%u, ", value);
+        }
+        DPRINTF("), Bitmap: %s\n", bitmap_str(bitmap).c_str());
+        table_map[i / lgn_by_2] = bitmap;
+        reduced.push_back(max_in_block);
+    }
+
+    DPRINTF("reduced.size(): %u\n", reduced.size());
+    st.initialize(reduced);
+    DCERR("initialize() completed"<<endl);
 }

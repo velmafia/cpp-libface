@@ -95,6 +95,7 @@ suggest(PhraseMap &pm, RMQ &st, std::string prefix, uint_t n = 16) {
 
 vp_t
 naive_suggest(PhraseMap& pm, RMQ& st, std::string prefix, uint_t n = 16) {
+    (void)st;
     pvpi_t phrases = pm.query(prefix);
     std::vector<uint_t> indexes;
     vp_t ret;

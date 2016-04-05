@@ -94,6 +94,7 @@ bool is_EOF(FILE *pf) { return feof(pf); }
 bool is_EOF(std::ifstream fin) { return !!fin; }
 
 void get_line(FILE *pf, char *buff, int buff_len, int &read_len) {
+    (void)buff_len;
     char *got = fgets(buff, INPUT_LINE_SIZE, pf);
     if (!got) {
         read_len = -1;
@@ -114,7 +115,6 @@ void get_line(std::ifstream fin, char *buff, int buff_len, int &read_len) {
 Souffleur::Souffleur():
     if_mmap_addr(NULL),
     if_length(0),
-    nreq(0),
     line_limit(-1),
     building(false)
 {

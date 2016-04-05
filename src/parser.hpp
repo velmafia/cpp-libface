@@ -52,8 +52,8 @@ struct InputLineParser {
                     std::string *_pphrase, StringProxy *_psp,
                     char *_if_mmap_addr, off_t _if_length)
         : state(ILP_BEFORE_NON_WS), mem_base(_mem_base), buff(_buff),
-          buff_offset(_bo), pn(_pn), pphrase(_pphrase), psnippet_proxy(_psp),
-          if_mmap_addr(_if_mmap_addr), if_length(_if_length)
+          buff_offset(_bo), pn(_pn), pphrase(_pphrase),
+          if_mmap_addr(_if_mmap_addr), if_length(_if_length), psnippet_proxy(_psp)
     { }
 
     void

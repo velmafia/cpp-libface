@@ -27,7 +27,6 @@ class LIBFACE_DLL_EXPORTED Souffleur
     RMQ st;                         // An instance of the RMQ Data Structure
     char *if_mmap_addr;      // Pointer to the mmapped area of the file
     off_t if_length;            // The length of the input file
-    unsigned long nreq;         // The total number of requests served till now
     int line_limit;            // The number of lines to import from the input file
     volatile bool building;
 };
