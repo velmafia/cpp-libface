@@ -10,11 +10,14 @@ Purpose of this project is:
 _Windows:_
 
 - `git submodules init`, `git submodules update`, open `mman-win32` project and build it
-- open Visual Studio command line for root directory or this repo
+- put `mman.lib` to the `libs/` directory
+- if you have Qt installed, open `libface-project/libface.pro` and build for Debug/Release
+- otherwise, open Visual Studio command line for root directory or this repo
 - run `nmake -f Makefile.win lib-face` in order to build libface
 
 _Linux/OS X:_
 
+- if you have Qt installed, open `libface-project/libface.pro` and build for Debug/Release
 - run `make lib-face` in the terminal in root directory of this repo
 
 **ORIGINAL cpp-libface**
