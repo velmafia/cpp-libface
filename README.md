@@ -18,7 +18,7 @@ _Windows:_
 _Linux/OS X:_
 
 - if you have Qt installed, open `libface-project/libface.pro` and build for Debug/Release
-- run `make lib-face` in the terminal in root directory of this repo
+- otherwise run `make lib-face` in the terminal in root directory of this repo
 
 **ORIGINAL cpp-libface**
 
