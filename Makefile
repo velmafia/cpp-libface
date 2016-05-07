@@ -6,6 +6,7 @@ INCDEPS=        include/segtree.hpp include/sparsetable.hpp include/benderrmq.hp
 INCDIRS=        -I . -I deps -I
 LIBFACEDEPS=    src/parser.hpp src/defines.hpp src/libfaceapi.hpp
 SOURCES=        src/libfaceapi.cpp include/benderrmq.cpp include/phrase_map.cpp include/segtree.cpp include/sparsetable.cpp
+DESTDIR=	../libs
 
 .PHONY: all clean debug test perf
 
@@ -39,5 +40,7 @@ perf:
 	$(CXX) -o tests/rmq_perf tests/rmq_perf.cpp -I . $(CXXFLAGS)
 	tests/rmq_perf
 
+install-lib: lib-face
+	cp libface.a $(DESTDIR)
 clean:
 	rm -f lib-face tests/containers tests/rmq_perf
