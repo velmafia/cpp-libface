@@ -12,11 +12,7 @@ CONFIG += staticlib
 
 DEFINES += LIBFACE_STATIC
 
-CONFIG(debug, debug|release)  {
-LIBS += -L"$$PWD/../mman-win32/Debug"
-} else {
-LIBS += -L"$$PWD/../mman-win32/Release"
-}
+LIBS += -L"$$PWD/../libs"
 LIBS += -lmman
 
 INCLUDEPATH += ../
