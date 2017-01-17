@@ -9,6 +9,7 @@ QT       -= core gui
 TARGET = face
 TEMPLATE = lib
 CONFIG += staticlib
+CONFIG += c++11
 
 DEFINES += LIBFACE_STATIC
 
