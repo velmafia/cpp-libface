@@ -8,10 +8,10 @@ QT       -= core gui
 
 TARGET = face
 TEMPLATE = lib
-CONFIG += staticlib
+# CONFIG += staticlib
 CONFIG += c++11
 
-DEFINES += LIBFACE_STATIC
+DEFINES += BUILDING_LIBFACE
 
 LIBS += -L"$$PWD/../libs"
 LIBS += -lmman
