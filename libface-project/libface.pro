@@ -14,7 +14,10 @@ CONFIG += c++11
 DEFINES += BUILDING_LIBFACE
 
 LIBS += -L"$$PWD/../libs"
-LIBS += -lmman
+
+win32 {
+    LIBS += -lmman
+}
 
 INCLUDEPATH += ../
 INCLUDEPATH += ../mman-win32/
