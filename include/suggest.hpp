@@ -10,8 +10,8 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include <include/utils.hpp>
-#include <include/types.hpp>
+#include "utils.hpp"
+#include "types.hpp"
 
 using namespace std;
 

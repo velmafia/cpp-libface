@@ -11,9 +11,9 @@
 #include <sstream>
 #include <assert.h>
 
-#include <include/types.hpp>
-#include <include/utils.hpp>
-#include <include/sparsetable.hpp>
+#include "types.hpp"
+#include "utils.hpp"
+#include "sparsetable.hpp"
 
 using namespace std;
 

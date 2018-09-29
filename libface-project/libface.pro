@@ -29,19 +29,19 @@ win32 {
 }
 
 INCLUDEPATH += ../
-INCLUDEPATH += ../mman-win32/
+INCLUDEPATH += ../include/
 
 SOURCES += \
     ../src/libfaceapi.cpp \
-    ../include/benderrmq.cpp \
-    ../include/phrase_map.cpp \
-    ../include/segtree.cpp \
-    ../include/sparsetable.cpp
+    ../src/benderrmq.cpp \
+    ../src/phrase_map.cpp \
+    ../src/segtree.cpp \
+    ../src/sparsetable.cpp
 
 HEADERS += \
-    ../src/defines.hpp \
-    ../src/libfaceapi.hpp \
-    ../src/parser.hpp \
+    ../include/defines.hpp \
+    ../include/libfaceapi.hpp \
+    ../include/parser.hpp \
     ../include/benderrmq.hpp \
     ../include/editdistance.hpp \
     ../include/phrase_map.hpp \

@@ -1,11 +1,11 @@
 #ifndef LIBFACE_API
 #define LIBFACE_API
 
-#include <include/segtree.hpp>
-#include <include/sparsetable.hpp>
-#include <include/benderrmq.hpp>
-#include <include/phrase_map.hpp>
-#include <include/types.hpp>
+#include "segtree.hpp"
+#include "sparsetable.hpp"
+#include "benderrmq.hpp"
+#include "phrase_map.hpp"
+#include "types.hpp"
 
 #include <string>
 #include "defines.hpp"

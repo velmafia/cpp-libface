@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include <include/types.hpp>
-#include <include/utils.hpp>
+#include "types.hpp"
+#include "utils.hpp"
 
 using namespace std;
 

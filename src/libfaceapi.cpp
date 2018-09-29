@@ -25,13 +25,13 @@
 #endif
 
 // Custom-includes
-#include <include/segtree.hpp>
-#include <include/sparsetable.hpp>
-#include <include/benderrmq.hpp>
-#include <include/phrase_map.hpp>
-#include <include/suggest.hpp>
-#include <include/types.hpp>
-#include <include/utils.hpp>
+#include "segtree.hpp"
+#include "sparsetable.hpp"
+#include "benderrmq.hpp"
+#include "phrase_map.hpp"
+#include "suggest.hpp"
+#include "types.hpp"
+#include "utils.hpp"
 
 // C++-headers
 #include <string>
