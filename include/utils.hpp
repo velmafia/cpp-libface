@@ -1,12 +1,13 @@
 #ifndef LIBFACE_UTILS_HPP
 #define LIBFACE_UTILS_HPP
 
+#include <cassert>
+#include <cstddef>
+#include <cstdio>
 #include <iostream>
-#include <vector>
-#include <utility>
 #include <ostream>
-#include <assert.h>
-#include <stdio.h>
+#include <utility>
+#include <vector>
 
 #include "types.hpp"
 

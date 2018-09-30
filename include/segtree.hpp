@@ -1,18 +1,10 @@
 #ifndef LIBFACE_SEGTREE_HPP
 #define LIBFACE_SEGTREE_HPP
 
-#include <iostream>
-#include <vector>
-#include <utility>
-#include <algorithm>
-#include <stdio.h>
-#include <assert.h>
-
 #include "types.hpp"
 #include "utils.hpp"
 
 using namespace std;
-
 
 class SegmentTree {
     vpui_t repr;

@@ -2,18 +2,13 @@
 #ifndef LIBFACE_BENDERRMQ_HPP
 #define LIBFACE_BENDERRMQ_HPP
 
-#include <iostream>
-#include <vector>
+#include <cstdio>
+#include <string>
 #include <utility>
-#include <algorithm>
-#include <stack>
-#include <stdio.h>
-#include <sstream>
-#include <assert.h>
 
+#include "sparsetable.hpp"
 #include "types.hpp"
 #include "utils.hpp"
-#include "sparsetable.hpp"
 
 using namespace std;
 

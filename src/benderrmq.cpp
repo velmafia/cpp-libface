@@ -1,5 +1,13 @@
 #include "benderrmq.hpp"
 
+#include <algorithm>
+#include <cassert>
+#include <iostream>
+#include <new>
+#include <sstream>
+#include <stack>
+#include <vector>
+
 std::string
 bitmap_str(uint_t i)
 {

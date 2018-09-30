@@ -1,5 +1,9 @@
 #include "phrase_map.hpp"
 
+#include <cassert>
+#include <iostream>
+#include <utility>
+
 pvpi_t
 naive_query(PhraseMap &pm, std::string prefix) {
     vpi_t f = pm.repr.begin(), l = pm.repr.begin();

@@ -1,19 +1,13 @@
 #ifndef LIBFACE_PHRASE_MAP_HPP
 #define LIBFACE_PHRASE_MAP_HPP
 
-#include <iostream>
-#include <vector>
-#include <utility>
 #include <algorithm>
 #include <string>
-#include <stdio.h>
-#include <assert.h>
+#include <vector>
 
 #include "types.hpp"
 
 using namespace std;
-
-
 
 struct PrefixFinder {
     bool

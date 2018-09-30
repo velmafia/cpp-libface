@@ -1,14 +1,12 @@
 #ifndef LIBFACE_LIBFACEAPI_HPP
 #define LIBFACE_LIBFACEAPI_HPP
 
-#include "segtree.hpp"
-#include "sparsetable.hpp"
-#include "benderrmq.hpp"
-#include "phrase_map.hpp"
-#include "types.hpp"
-
 #include <string>
+
 #include "defines.hpp"
+#include "phrase_map.hpp"
+#include "segtree.hpp"
+#include "types.hpp"
 
 class LIBFACE_DLL_EXPORTED Souffleur
 {

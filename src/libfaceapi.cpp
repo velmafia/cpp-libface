@@ -1,52 +1,35 @@
 #include "libfaceapi.hpp"
-#include "defines.hpp"
-#include "parser.hpp"
 
-// C-headers
-#include <stdio.h>
+#include <algorithm>
+#include <cassert>
+#include <cctype>
+#include <cstdio>
+#include <ctime>
+#include <fcntl.h>
+#include <fstream>
+#include <iostream>
+#include <memory>
 #include <string.h>
-
-#ifdef _WIN32
-#include <io.h>
-#else
-#include <unistd.h>
-#endif
-
-#include <stdlib.h>
-#include <time.h>
-//#include <libgen.h>
-#include <sys/types.h>
+#include <string>
 #include <sys/stat.h>
 
 #ifdef _WIN32
+#include <io.h>
 #include <mman-win32/mman.h>
 #else
+#include <unistd.h>
 #include <sys/mman.h>
 #endif
 
-// Custom-includes
-#include "segtree.hpp"
-#include "sparsetable.hpp"
-#include "benderrmq.hpp"
+#include "parser.hpp"
 #include "phrase_map.hpp"
 #include "suggest.hpp"
 #include "types.hpp"
 #include "utils.hpp"
 
-// C++-headers
-#include <string>
-#include <fstream>
-#include <algorithm>
-#include <cctype>
-
-#include <assert.h>
-#include <fcntl.h>
-
-
 #if !defined NMAX
 #define NMAX 32
 #endif
-
 
 #if !defined INPUT_LINE_SIZE
 // Max. line size is 8191 bytes.
@@ -58,7 +41,6 @@
 
 // Undefine the macro below to use C-style I/O routines.
 // #define USE_CXX_IO
-
 
 off_t
 file_size(const char *path) {

@@ -3,12 +3,8 @@
 #ifndef LIBFACE_SPARSETABLE_HPP
 #define LIBFACE_SPARSETABLE_HPP
 
-#include <iostream>
-#include <vector>
+#include <cstddef>
 #include <utility>
-#include <algorithm>
-#include <stdio.h>
-#include <assert.h>
 
 #include "types.hpp"
 #include "utils.hpp"

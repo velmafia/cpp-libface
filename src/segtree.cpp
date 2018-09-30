@@ -1,5 +1,7 @@
 #include "segtree.hpp"
 
+#include <cstdio>
+
 namespace segtree {
 
     pui_t

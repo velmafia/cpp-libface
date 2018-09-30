@@ -1,5 +1,7 @@
 #include "sparsetable.hpp"
 
+#include <cstdio>
+
 namespace sparsetable {
 
     pui_t
