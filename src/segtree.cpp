@@ -41,8 +41,8 @@ namespace segtree {
         SegmentTree st;
         st.initialize(v);
 
-	printf("Testing SegmentTree implementation\n");
-	printf("----------------------------------\n");
+        printf("Testing SegmentTree implementation\n");
+        printf("----------------------------------\n");
 
         for (size_t i = 0; i < v.size(); ++i) {
             for (size_t j = i; j < v.size(); ++j) {
@@ -53,7 +53,7 @@ namespace segtree {
             }
         }
 
-	printf("\n");
+        printf("\n");
         return 0;
     }
 }

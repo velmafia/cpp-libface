@@ -18,8 +18,8 @@ namespace sparsetable {
 
     int
     test() {
-	printf("Testing SparseTable implementation\n");
-	printf("----------------------------------\n");
+        printf("Testing SparseTable implementation\n");
+        printf("----------------------------------\n");
 
         vui_t v;
         v.push_back(45);
@@ -53,7 +53,7 @@ namespace sparsetable {
             }
         }
 
-	printf("\n");
+        printf("\n");
         return 0;
     }
 }

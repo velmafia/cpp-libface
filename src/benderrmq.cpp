@@ -2,10 +2,10 @@
 
 std::string
 bitmap_str(uint_t i)
- {
+{
     std::string out;
     for (int x = 17; x >= 0; --x) {
-	out += '0' + ((i & (1L << x)) ? 1 : 0);
+        out += '0' + ((i & (1L << x)) ? 1 : 0);
     }
     return out;
 }
@@ -15,17 +15,17 @@ bitmap_str(uint_t i)
  */
 void
 euler_tour(BinaryTreeNode *n,
-	   vui_t &output, /* Where the output is written. Should be empty */
-	   vui_t &levels, /* Where the level for each node is written. Should be empty */
-	   vui_t &mapping /* mapping stores representative
+           vui_t &output, /* Where the output is written. Should be empty */
+           vui_t &levels, /* Where the level for each node is written. Should be empty */
+           vui_t &mapping /* mapping stores representative
                              indexes which maps from the original index to the index
                              into the euler tour array, which is a +- RMQ */,
-	   vui_t &rev_mapping /* Reverse mapping to go from +-RMQ
-				 indexes to user provided indexes */,
-	   int level) {
+           vui_t &rev_mapping /* Reverse mapping to go from +-RMQ
+                                 indexes to user provided indexes */,
+           int level) {
     DPRINTF("euler_tour(%d, %d)\n", n?n->data:-1, n?n->index:-1);
     if (!n) {
-	return;
+        return;
     }
     output.push_back(n->data);
     mapping[n->index] = output.size() - 1;
@@ -33,16 +33,16 @@ euler_tour(BinaryTreeNode *n,
     rev_mapping.push_back(n->index);
     levels.push_back(level);
     if (n->left) {
-	euler_tour(n->left, output, levels, mapping, rev_mapping, level+1);
-	output.push_back(n->data);
-	rev_mapping.push_back(n->index);
-	levels.push_back(level);
+        euler_tour(n->left, output, levels, mapping, rev_mapping, level+1);
+        output.push_back(n->data);
+        rev_mapping.push_back(n->index);
+        levels.push_back(level);
     }
     if (n->right) {
-	euler_tour(n->right, output, levels, mapping, rev_mapping, level+1);
-	output.push_back(n->data);
-	rev_mapping.push_back(n->index);
-	levels.push_back(level);
+        euler_tour(n->right, output, levels, mapping, rev_mapping, level+1);
+        output.push_back(n->data);
+        rev_mapping.push_back(n->index);
+        levels.push_back(level);
     }
     // We don't delete the node here since the clear() function on the
     // SimpleFixedObjectAllocator<BinaryTreeNode> will take care of
@@ -57,52 +57,52 @@ make_cartesian_tree(vui_t const &input, SimpleFixedObjectAllocator<BinaryTreeNod
     std::stack<BinaryTreeNode*> stk;
 
     if (input.empty()) {
-	return NULL;
+        return NULL;
     }
 
     for (uint_t i = 0; i < input.size(); ++i) {
-	curr = alloc.get();
+        curr = alloc.get();
         new (curr) BinaryTreeNode(input[i], i);
-	DPRINTF("ct(%d, %d)\n", curr->data, curr->index);
+        DPRINTF("ct(%d, %d)\n", curr->data, curr->index);
 
-	if (stk.empty()) {
-	    stk.push(curr);
-	    DPRINTF("[1] stack top (%d, %d)\n", curr->data, curr->index);
-	} else {
-	    if (input[i] <= stk.top()->data) {
-		// Just add it
-		stk.push(curr);
-		DPRINTF("[2] stack top (%d, %d)\n", curr->data, curr->index);
-	    } else {
-		// Back up till we are the largest node on the stack
-		BinaryTreeNode *top = NULL;
-		BinaryTreeNode *prev = NULL;
-		while (!stk.empty() && stk.top()->data < input[i]) {
-		    prev = top;
-		    top = stk.top();
-		    DPRINTF("[1] popping & setting (%d, %d)->right = (%d, %d)\n", top->data, top->index,
-			    prev?prev->data:-1, prev?prev->index:-1);
-		    top->right = prev;
-		    stk.pop();
-		}
-		curr->left = top;
-		DPRINTF("(%d, %d)->left = (%d, %d)\n", curr->data, curr->index, top->data, top->index);
-		stk.push(curr);
-		DPRINTF("stack top is now (%d, %d)\n", curr->data, curr->index);
-	    }
-	}
+        if (stk.empty()) {
+            stk.push(curr);
+            DPRINTF("[1] stack top (%d, %d)\n", curr->data, curr->index);
+        } else {
+            if (input[i] <= stk.top()->data) {
+                // Just add it
+                stk.push(curr);
+                DPRINTF("[2] stack top (%d, %d)\n", curr->data, curr->index);
+            } else {
+                // Back up till we are the largest node on the stack
+                BinaryTreeNode *top = NULL;
+                BinaryTreeNode *prev = NULL;
+                while (!stk.empty() && stk.top()->data < input[i]) {
+                    prev = top;
+                    top = stk.top();
+                    DPRINTF("[1] popping & setting (%d, %d)->right = (%d, %d)\n", top->data, top->index,
+                            prev?prev->data:-1, prev?prev->index:-1);
+                    top->right = prev;
+                    stk.pop();
+                }
+                curr->left = top;
+                DPRINTF("(%d, %d)->left = (%d, %d)\n", curr->data, curr->index, top->data, top->index);
+                stk.push(curr);
+                DPRINTF("stack top is now (%d, %d)\n", curr->data, curr->index);
+            }
+        }
     }
 
     assert(!stk.empty());
     BinaryTreeNode *top = NULL;
     BinaryTreeNode *prev = NULL;
     while (!stk.empty()) {
-	prev = top;
-	top = stk.top();
-	DPRINTF("[2] popping & setting (%d, %d)->right = (%d, %d)\n", top->data, top->index,
-		prev?prev->data:-1, prev?prev->index:-1);
-	top->right = prev;
-	stk.pop();
+        prev = top;
+        top = stk.top();
+        DPRINTF("[2] popping & setting (%d, %d)->right = (%d, %d)\n", top->data, top->index,
+                prev?prev->data:-1, prev?prev->index:-1);
+        top->right = prev;
+        stk.pop();
     }
     DPRINTF("returning top = (%d, %d)\n", top->data, top->index);
 
@@ -112,13 +112,13 @@ make_cartesian_tree(vui_t const &input, SimpleFixedObjectAllocator<BinaryTreeNod
 std::string
 toGraphViz(BinaryTreeNode* par, BinaryTreeNode *n) {
     if (!n) {
-	return "";
+        return "";
     }
 
     std::ostringstream sout;
 
     if (par) {
-	sout<<'"'<<par->data<<"_"<<par->index<<"\" -> \""<<n->data<<"_"<<n->index<<"\"\n";
+        sout<<'"'<<par->data<<"_"<<par->index<<"\" -> \""<<n->data<<"_"<<n->index<<"\"\n";
     }
     sout<<toGraphViz(n, n->left);
     sout<<toGraphViz(n, n->right);
@@ -202,13 +202,13 @@ namespace benderrmq {
 
     int
     test() {
-	printf("Testing BenderRMQ implementation\n");
-	printf("--------------------------------\n");
+        printf("Testing BenderRMQ implementation\n");
+        printf("--------------------------------\n");
 
-	LookupTables lt;
-	lt.initialize(4);
-	// lt.show_tables();
-	// return 0;
+        LookupTables lt;
+        lt.initialize(4);
+        // lt.show_tables();
+        // return 0;
 
         vui_t v;
         v.push_back(45);
@@ -230,7 +230,7 @@ namespace benderrmq {
         v.push_back(95);
         v.push_back(88);
 
-	BenderRMQ brmq;
+        BenderRMQ brmq;
         brmq.initialize(v);
 
         for (size_t i = 0; i < v.size(); ++i) {
@@ -242,7 +242,7 @@ namespace benderrmq {
             }
         }
 
-	printf("\n");
+        printf("\n");
         return 0;
     }
 }
