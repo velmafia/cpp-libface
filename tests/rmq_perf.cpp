@@ -10,8 +10,6 @@
 #include <include/types.hpp>
 #include <include/utils.hpp>
 
-using namespace std;
-
 #if !defined NUM_ELEMS
 #define NUM_ELEMS 8000000
 #endif

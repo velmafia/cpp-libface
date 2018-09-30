@@ -319,5 +319,5 @@ void BenderRMQ::initialize(const vui_t &elems) {
 
     DPRINTF("reduced.size(): %u\n", reduced.size());
     st.initialize(reduced);
-    DCERR("initialize() completed"<<endl);
+    DCERR("initialize() completed"<<std::endl);
 }

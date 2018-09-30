@@ -4,8 +4,6 @@
 #include "types.hpp"
 #include "utils.hpp"
 
-using namespace std;
-
 class SegmentTree {
     vpui_t repr;
     uint_t len;

@@ -7,8 +7,6 @@
 
 #include "types.hpp"
 
-using namespace std;
-
 struct PrefixFinder {
     bool
     operator()(std::string const& prefix, phrase_t const &target) {

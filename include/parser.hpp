@@ -1,9 +1,10 @@
 #ifndef LIBFACE_PARSER_HPP
 #define LIBFACE_PARSER_HPP
 
-#include <string>
+#include <cassert>
 #include <iostream>
-#include <assert.h>
+#include <string>
+
 #include "types.hpp"
 #include "utils.hpp"
 
@@ -109,7 +110,7 @@ struct InputLineParser {
                 break;
 
             case ILP_PHRASE:
-                // DCERR("State: ILP_PHRASE: "<<buff[i]<<endl);
+                // DCERR("State: ILP_PHRASE: "<<buff[i]<<std::endl);
                 if (ch != '\t') {
                     ++p_len;
                 }

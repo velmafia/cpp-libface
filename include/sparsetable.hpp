@@ -9,8 +9,6 @@
 #include "types.hpp"
 #include "utils.hpp"
 
-using namespace std;
-
 class SparseTable {
     /* For each element in repr, we store just the index of the MAX
      * element in data.
@@ -33,12 +31,12 @@ public:
         this->len = elems.size();
         this->repr.clear();
 
-        DCERR("len: "<<this->len<<endl);
+        DCERR("len: "<<this->len<<std::endl);
 
         const size_t ntables = log2(this->len) + 1;
         this->repr.resize(ntables);
 
-        DCERR("ntables: "<<ntables<<endl);
+        DCERR("ntables: "<<ntables<<std::endl);
 
         this->repr[0].resize(this->len);
         for (size_t i = 0; i < this->len; ++i) {
@@ -62,11 +60,11 @@ public:
          */
             const size_t vsz = this->len - bs + 1;
 
-            DCERR("starting i: "<<i<<" bs: "<<bs<<endl);
+            DCERR("starting i: "<<i<<" bs: "<<bs<<std::endl);
 
             this->repr[i].resize(vsz);
 
-            // cerr<<"i: "<<i<<", vsz: "<<vsz<<endl;
+            // cerr<<"i: "<<i<<", vsz: "<<vsz<<std::endl;
 
             vui_t& curr = this->repr[i];
             vui_t& prev = this->repr[i - 1];
@@ -81,11 +79,11 @@ public:
                 else {
                     curr[j] = prev[j+pbs];
                 }
-                // cerr<<"curr["<<j<<"] = "<<curr[j].first<<endl;
+                // cerr<<"curr["<<j<<"] = "<<curr[j].first<<std::endl;
             }
-            // cerr<<"done with i: "<<i<<endl;
+            // cerr<<"done with i: "<<i<<std::endl;
         }
-        // cerr<<"initialize() completed"<<endl;
+        // cerr<<"initialize() completed"<<std::endl;
     }
 
     // qf & ql are indexes; both inclusive.
@@ -93,14 +91,14 @@ public:
     pui_t
     query_max(uint_t qf, uint_t ql) {
         if (qf >= this->len || ql >= this->len || ql < qf) {
-            return make_pair(minus_one, minus_one);
+            return std::make_pair(minus_one, minus_one);
         }
 
         const int rlen = ql - qf + 1;
         const size_t ti = log2(rlen);
         const size_t f = qf, l = ql + 1 - (1 << ti);
 
-        // cerr<<"query_max("<<qf<<", "<<ql<<"), ti: "<<ti<<", f: "<<f<<", l: "<<l<<endl;
+        // cerr<<"query_max("<<qf<<", "<<ql<<"), ti: "<<ti<<", f: "<<f<<", l: "<<l<<std::endl;
         const uint_t data1 = data[this->repr[ti][f]];
         const uint_t data2 = data[this->repr[ti][l]];
 

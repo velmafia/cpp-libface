@@ -4,12 +4,12 @@
 #include <cassert>
 #include <cctype>
 #include <cstdio>
+#include <cstring>
 #include <ctime>
 #include <fcntl.h>
 #include <fstream>
 #include <iostream>
 #include <memory>
-#include <string.h>
 #include <string>
 #include <sys/stat.h>
 
@@ -17,8 +17,8 @@
 #include <io.h>
 #include <mman-win32/mman.h>
 #else
-#include <unistd.h>
 #include <sys/mman.h>
+#include <unistd.h>
 #endif
 
 #include "parser.hpp"
@@ -113,7 +113,7 @@ int Souffleur::do_import(std::string file, uint_t limit,
 
     int fd = open(file.c_str(), O_RDONLY);
 
-    DCERR("handle_import::file:" << file << "[fin: " << (!!fin) << ", fd: " << fd << "]" << endl);
+    DCERR("handle_import::file:" << file << "[fin: " << (!!fin) << ", fd: " << fd << "]" << std::endl);
 
     if (!fin || fd == -1) {
         perror("fopen");
@@ -171,7 +171,7 @@ int Souffleur::do_import(std::string file, uint_t limit,
 
             if (!phrase.empty()) {
                 str_lowercase(phrase);
-                DCERR("Adding: " << weight << ", " << phrase << ", " << std::string(snippet) << endl);
+                DCERR("Adding: " << weight << ", " << phrase << ", " << std::string(snippet) << std::endl);
                 pm.insert(weight, phrase, snippet);
             }
             if (is_input_sorted && prev_phrase <= phrase) {
@@ -221,7 +221,7 @@ bool Souffleur::import(const char *ac_file) {
                     break;
 
                 default:
-                    cerr<<"ERROR::Unknown error: "<<ret<<endl;
+                    std::cerr<<"ERROR::Unknown error: "<<ret<< std::endl;
             }
             return 1;
         }

@@ -1,11 +1,11 @@
 #ifndef LIBFACE_TYPES_HPP
 #define LIBFACE_TYPES_HPP
 
+#include <cassert>
+#include <cstring>
+#include <string>
 #include <utility>
 #include <vector>
-#include <string>
-#include <string.h>
-#include <assert.h>
 
 #if !defined RMQ
 #define RMQ SegmentTree

@@ -10,8 +10,6 @@
 #include "types.hpp"
 #include "utils.hpp"
 
-using namespace std;
-
 #define MIN_SIZE_FOR_BENDER_RMQ 16
 
 std::string
@@ -23,11 +21,11 @@ struct BinaryTreeNode {
     uint_t index;
 
     BinaryTreeNode(BinaryTreeNode *_left, BinaryTreeNode *_right, uint_t _data, uint_t _index)
-	: left(_left), right(_right), data(_data), index(_index)
+        : left(_left), right(_right), data(_data), index(_index)
     { }
 
     BinaryTreeNode(uint_t _data, uint_t _index)
-	: left(NULL), right(NULL), data(_data), index(_index)
+        : left(NULL), right(NULL), data(_data), index(_index)
     { }
 };
 
@@ -65,14 +63,14 @@ public:
  */
 void
 euler_tour(BinaryTreeNode *n,
-	   vui_t &output, /* Where the output is written. Should be empty */
-	   vui_t &levels, /* Where the level for each node is written. Should be empty */
-	   vui_t &mapping /* mapping stores representative
-                             indexes which maps from the original index to the index
-                             into the euler tour array, which is a +- RMQ */,
-	   vui_t &rev_mapping /* Reverse mapping to go from +-RMQ
-				 indexes to user provided indexes */,
-	   int level = 1);
+           vui_t &output, /* Where the output is written. Should be empty */
+           vui_t &levels, /* Where the level for each node is written. Should be empty */
+           vui_t &mapping /* mapping stores representative
+                                        indexes which maps from the original index to the index
+                                        into the euler tour array, which is a +- RMQ */,
+           vui_t &rev_mapping /* Reverse mapping to go from +-RMQ
+                            indexes to user provided indexes */,
+           int level = 1);
 
 BinaryTreeNode*
 make_cartesian_tree(vui_t const &input, SimpleFixedObjectAllocator<BinaryTreeNode> &alloc);
@@ -99,33 +97,33 @@ public:
 
     void
     show_tables() {
-	if (repr.empty()) {
-	    return;
-	}
-	int nr = repr[0].size();
-	int nc = repr[0][0].size();
-	for (uint_t i = 0; i < repr.size(); ++i) {
-	    DPRINTF("Bitmap: %s\n", bitmap_str(i).c_str());
-	    DPRINTF("   |");
+        if (repr.empty()) {
+            return;
+        }
+        int nr = repr[0].size();
+        int nc = repr[0][0].size();
+        for (uint_t i = 0; i < repr.size(); ++i) {
+            DPRINTF("Bitmap: %s\n", bitmap_str(i).c_str());
+            DPRINTF("   |");
 
-	    for (int c = 0; c < nc; ++c) {
-		DPRINTF("%3d ", c);
-		if (c+1 != nc) {
-		    DPRINTF("|");
-		}
-	    }
-	    DPRINTF("\n");
-	    for (int r = 0; r < nr; ++r) {
-		DPRINTF("%2d |", r);
-		for (int c = 0; c < nc; ++c) {
-		    DPRINTF("%3d ", (r<c ? repr[i][r][c] : -1));
-		    if (c+1 != nc) {
-			DPRINTF("|");
-		    }
-		}
-		DPRINTF("\n");
-	    }
-	}
+            for (int c = 0; c < nc; ++c) {
+                DPRINTF("%3d ", c);
+                if (c+1 != nc) {
+                    DPRINTF("|");
+                }
+            }
+            DPRINTF("\n");
+            for (int r = 0; r < nr; ++r) {
+                DPRINTF("%2d |", r);
+                for (int c = 0; c < nc; ++c) {
+                    DPRINTF("%3d ", (r<c ? repr[i][r][c] : -1));
+                    if (c+1 != nc) {
+                        DPRINTF("|");
+                    }
+                }
+                DPRINTF("\n");
+            }
+        }
     }
 
 };
@@ -174,32 +172,32 @@ public:
     pui_t
     query_max(uint_t qf, uint_t ql) {
         if (qf >= this->len || ql >= this->len || ql < qf) {
-            return make_pair(minus_one, minus_one);
+            return std::make_pair(minus_one, minus_one);
         }
 
-	if (len < MIN_SIZE_FOR_BENDER_RMQ) {
+        if (len < MIN_SIZE_FOR_BENDER_RMQ) {
             return st.query_max(qf, ql);
         }
 
-	DPRINTF("[1] (qf, ql) = (%d, %d)\n", qf, ql);
-	// Map to +-RMQ co-ordinates
-	qf = mapping[qf];
-	ql = mapping[ql];
-	DPRINTF("[2] (qf, ql) = (%d, %d)\n", qf, ql);
+        DPRINTF("[1] (qf, ql) = (%d, %d)\n", qf, ql);
+        // Map to +-RMQ co-ordinates
+        qf = mapping[qf];
+        ql = mapping[ql];
+        DPRINTF("[2] (qf, ql) = (%d, %d)\n", qf, ql);
 
-	if (qf > ql) {
-	    std::swap(qf, ql);
-	    DPRINTF("[3] (qf, ql) = (%d, %d)\n", qf, ql);
-	}
+        if (qf > ql) {
+            std::swap(qf, ql);
+            DPRINTF("[3] (qf, ql) = (%d, %d)\n", qf, ql);
+        }
 
-	// Determine whether we need to query 'st'.
-	const uint_t first_block_index = qf / lgn_by_2;
-	const uint_t last_block_index = ql / lgn_by_2;
+        // Determine whether we need to query 'st'.
+        const uint_t first_block_index = qf / lgn_by_2;
+        const uint_t last_block_index = ql / lgn_by_2;
 
-	DPRINTF("first_block_index: %u, last_block_index: %u\n",
-		first_block_index, last_block_index);
+        DPRINTF("first_block_index: %u, last_block_index: %u\n",
+                first_block_index, last_block_index);
 
-	pui_t ret(0, 0);
+        pui_t ret(0, 0);
 
         /* Main logic:
          *
@@ -218,28 +216,28 @@ public:
          *
          */
 
-	if (last_block_index - first_block_index > 1) {
-	    // We need to perform an inter-block query using the 'st'.
-	    ret = st.query_max(first_block_index + 1, last_block_index - 1);
+        if (last_block_index - first_block_index > 1) {
+            // We need to perform an inter-block query using the 'st'.
+            ret = st.query_max(first_block_index + 1, last_block_index - 1);
 
-	    // Now perform an in-block query to get the index of the
-	    // max value as it appears in 'euler'.
-	    const uint_t bitmapx = table_map[ret.second];
-	    const uint_t imax = lt.query_max(bitmapx, 0, lgn_by_2-1) + ret.second*lgn_by_2;
-	    ret.second = imax;
-	} else if (first_block_index == last_block_index) {
-	    // The query is completely within a block.
-	    const uint_t bitmapx = table_map[first_block_index];
-	    DPRINTF("bitmapx: %s\n", bitmap_str(bitmapx).c_str());
-	    qf %= lgn_by_2;
-	    ql %= lgn_by_2;
-	    const uint_t imax = lt.query_max(bitmapx, qf, ql) + first_block_index*lgn_by_2;
-	    ret = make_pair(euler[imax], rev_mapping[imax]);
-	    return ret;
-	}
+            // Now perform an in-block query to get the index of the
+            // max value as it appears in 'euler'.
+            const uint_t bitmapx = table_map[ret.second];
+            const uint_t imax = lt.query_max(bitmapx, 0, lgn_by_2-1) + ret.second*lgn_by_2;
+            ret.second = imax;
+        } else if (first_block_index == last_block_index) {
+            // The query is completely within a block.
+            const uint_t bitmapx = table_map[first_block_index];
+            DPRINTF("bitmapx: %s\n", bitmap_str(bitmapx).c_str());
+            qf %= lgn_by_2;
+            ql %= lgn_by_2;
+            const uint_t imax = lt.query_max(bitmapx, qf, ql) + first_block_index*lgn_by_2;
+            ret = std::make_pair(euler[imax], rev_mapping[imax]);
+            return ret;
+        }
 
-	// Now perform an in-block query for the first and last
-	// blocks.
+        // Now perform an in-block query for the first and last
+        // blocks.
         const uint_t f1 = qf % lgn_by_2;
         const uint_t f2 = lgn_by_2 - 1;
 
@@ -249,37 +247,37 @@ public:
         const uint_t bitmap1 = table_map[first_block_index];
         const uint_t bitmap2 = table_map[last_block_index];
 
-	DPRINTF("bitmap1: %s, bitmap2: %s\n", bitmap_str(bitmap1).c_str(),
-		bitmap_str(bitmap2).c_str());
+        DPRINTF("bitmap1: %s, bitmap2: %s\n", bitmap_str(bitmap1).c_str(),
+                bitmap_str(bitmap2).c_str());
 
-	uint_t max1i = lt.query_max(bitmap1, f1, f2);
-	uint_t max2i = lt.query_max(bitmap2, l1, l2);
+        uint_t max1i = lt.query_max(bitmap1, f1, f2);
+        uint_t max2i = lt.query_max(bitmap2, l1, l2);
 
-	DPRINTF("max1i: %u, max2i: %u\n", max1i, max2i);
+        DPRINTF("max1i: %u, max2i: %u\n", max1i, max2i);
 
-	max1i += first_block_index * lgn_by_2;
-	max2i += last_block_index * lgn_by_2;
+        max1i += first_block_index * lgn_by_2;
+        max2i += last_block_index * lgn_by_2;
 
-	if (last_block_index - first_block_index > 1) {
-	    // 3-way max
-	    DPRINTF("ret: %u, max1: %u, max2: %u\n", ret.first, euler[max1i], euler[max2i]);
-	    if (ret.first > euler[max1i] && ret.first > euler[max2i]) {
-		ret.second = rev_mapping[ret.second];
-	    } else if (euler[max1i] >= ret.first && euler[max1i] >= euler[max2i]) {
-		ret = make_pair(euler[max1i], rev_mapping[max1i]);
-	    } else if (euler[max2i] >= ret.first && euler[max2i] >= euler[max1i]) {
-		ret = make_pair(euler[max2i], rev_mapping[max2i]);
-	    }
-	} else {
-	    // 2-way max
-	    if (euler[max1i] > euler[max2i]) {
-		ret = make_pair(euler[max1i], rev_mapping[max1i]);
-	    } else {
-		ret = make_pair(euler[max2i], rev_mapping[max2i]);
-	    }
-	}
+        if (last_block_index - first_block_index > 1) {
+            // 3-way max
+            DPRINTF("ret: %u, max1: %u, max2: %u\n", ret.first, euler[max1i], euler[max2i]);
+            if (ret.first > euler[max1i] && ret.first > euler[max2i]) {
+                ret.second = rev_mapping[ret.second];
+            } else if (euler[max1i] >= ret.first && euler[max1i] >= euler[max2i]) {
+                ret = std::make_pair(euler[max1i], rev_mapping[max1i]);
+            } else if (euler[max2i] >= ret.first && euler[max2i] >= euler[max1i]) {
+                ret = std::make_pair(euler[max2i], rev_mapping[max2i]);
+            }
+        } else {
+            // 2-way max
+            if (euler[max1i] > euler[max2i]) {
+                ret = std::make_pair(euler[max1i], rev_mapping[max1i]);
+            } else {
+                ret = std::make_pair(euler[max2i], rev_mapping[max2i]);
+            }
+        }
 
-	return ret;
+        return ret;
     }
 
 };

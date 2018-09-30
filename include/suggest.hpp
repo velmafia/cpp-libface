@@ -1,19 +1,18 @@
 #ifndef LIBFACE_SUGGEST_HPP
 #define LIBFACE_SUGGEST_HPP
 
-#include <iostream>
-#include <vector>
-#include <utility>
 #include <algorithm>
-#include <string>
+#include <cassert>
+#include <cstdio>
+#include <iostream>
 #include <queue>
-#include <stdio.h>
-#include <assert.h>
+#include <string>
+#include <utility>
+#include <vector>
 
-#include "utils.hpp"
+#include "phrase_map.hpp"
 #include "types.hpp"
-
-using namespace std;
+#include "utils.hpp"
 
 struct PhraseRange {
     // first & last are both inclusive of the range. i.e. The range is
@@ -42,7 +41,7 @@ typedef std::priority_queue<PhraseRange> pqpr_t;
 vp_t
 suggest(PhraseMap &pm, RMQ &st, std::string prefix, uint_t n = 16) {
     pvpi_t phrases = pm.query(prefix);
-    // cerr<<"Got "<<phrases.second - phrases.first<<" candidate phrases from PhraseMap"<<endl;
+    // cerr<<"Got "<<phrases.second - phrases.first<<" candidate phrases from PhraseMap"<<std::endl;
 
     uint_t first = phrases.first  - pm.repr.begin();
     uint_t last  = phrases.second - pm.repr.begin();
@@ -61,8 +60,8 @@ suggest(PhraseMap &pm, RMQ &st, std::string prefix, uint_t n = 16) {
     while (ret.size() < n && !heap.empty()) {
         PhraseRange pr = heap.top();
         heap.pop();
-        // cerr<<"Top phrase is at index: "<<pr.index<<endl;
-        // cerr<<"And is: "<<pm.repr[pr.index].first<<endl;
+        // cerr<<"Top phrase is at index: "<<pr.index<<std::endl;
+        // cerr<<"And is: "<<pm.repr[pr.index].first<<std::endl;
 
         ret.push_back(pm.repr[pr.index]);
 
@@ -71,7 +70,7 @@ suggest(PhraseMap &pm, RMQ &st, std::string prefix, uint_t n = 16) {
 
         // Prevent underflow
         if (pr.index - 1 < pr.index && lower <= upper) {
-            // cerr<<"[1] adding to heap: "<<lower<<", "<<upper<<", "<<best.first<<", "<<best.second<<endl;
+            // cerr<<"[1] adding to heap: "<<lower<<", "<<upper<<", "<<best.first<<", "<<best.second<<std::endl;
 
             best = st.query_max(lower, upper);
             heap.push(PhraseRange(lower, upper, best.first, best.second));
@@ -82,7 +81,7 @@ suggest(PhraseMap &pm, RMQ &st, std::string prefix, uint_t n = 16) {
 
         // Prevent overflow
         if (pr.index + 1 > pr.index && lower <= upper) {
-            // cerr<<"[2] adding to heap: "<<lower<<", "<<upper<<", "<<best.first<<", "<<best.second<<endl;
+            // cerr<<"[2] adding to heap: "<<lower<<", "<<upper<<", "<<best.first<<", "<<best.second<<std::endl;
 
             best = st.query_max(lower, upper);
             heap.push(PhraseRange(lower, upper, best.first, best.second));
@@ -142,33 +141,33 @@ namespace _suggest {
 
         st.initialize(weights);
 
-        cout<<"\n";
-        cout<<"suggest(\"d\"):\n"<<suggest(pm, st, "d")<<endl;
-        cout<<"naive_suggest(\"d\"):\n"<<naive_suggest(pm, st, "d")<<endl;
+        std::cout<<"\n";
+        std::cout<<"suggest(\"d\"):\n"<<suggest(pm, st, "d")<<std::endl;
+        std::cout<<"naive_suggest(\"d\"):\n"<<naive_suggest(pm, st, "d")<<std::endl;
 
-        cout<<"\n";
-        cout<<"suggest(\"a\"):\n"<<suggest(pm, st, "a")<<endl;
-        cout<<"naive_suggest(\"a\"):\n"<<naive_suggest(pm, st, "a")<<endl;
+        std::cout<<"\n";
+        std::cout<<"suggest(\"a\"):\n"<<suggest(pm, st, "a")<<std::endl;
+        std::cout<<"naive_suggest(\"a\"):\n"<<naive_suggest(pm, st, "a")<<std::endl;
 
-        cout<<"\n";
-        cout<<"suggest(\"b\"):\n"<<suggest(pm, st, "b")<<endl;
-        cout<<"naive_suggest(\"b\"):\n"<<naive_suggest(pm, st, "b")<<endl;
+        std::cout<<"\n";
+        std::cout<<"suggest(\"b\"):\n"<<suggest(pm, st, "b")<<std::endl;
+        std::cout<<"naive_suggest(\"b\"):\n"<<naive_suggest(pm, st, "b")<<std::endl;
 
-        cout<<"\n";
-        cout<<"suggest(\"duck\"):\n"<<suggest(pm, st, "duck")<<endl;
-        cout<<"naive_suggest(\"duck\"):\n"<<naive_suggest(pm, st, "duck")<<endl;
+        std::cout<<"\n";
+        std::cout<<"suggest(\"duck\"):\n"<<suggest(pm, st, "duck")<<std::endl;
+        std::cout<<"naive_suggest(\"duck\"):\n"<<naive_suggest(pm, st, "duck")<<std::endl;
 
-        cout<<"\n";
-        cout<<"suggest(\"k\"):\n"<<suggest(pm, st, "k")<<endl;
-        cout<<"naive_suggest(\"k\"):\n"<<naive_suggest(pm, st, "k")<<endl;
+        std::cout<<"\n";
+        std::cout<<"suggest(\"k\"):\n"<<suggest(pm, st, "k")<<std::endl;
+        std::cout<<"naive_suggest(\"k\"):\n"<<naive_suggest(pm, st, "k")<<std::endl;
 
-        cout<<"\n";
-        cout<<"suggest(\"ka\"):\n"<<suggest(pm, st, "ka")<<endl;
-        cout<<"naive_suggest(\"ka\"):\n"<<naive_suggest(pm, st, "ka")<<endl;
+        std::cout<<"\n";
+        std::cout<<"suggest(\"ka\"):\n"<<suggest(pm, st, "ka")<<std::endl;
+        std::cout<<"naive_suggest(\"ka\"):\n"<<naive_suggest(pm, st, "ka")<<std::endl;
 
-        cout<<"\n";
-        cout<<"suggest(\"c\"):\n"<<suggest(pm, st, "c")<<endl;
-        cout<<"naive_suggest(\"c\"):\n"<<naive_suggest(pm, st, "c")<<endl;
+        std::cout<<"\n";
+        std::cout<<"suggest(\"c\"):\n"<<suggest(pm, st, "c")<<std::endl;
+        std::cout<<"naive_suggest(\"c\"):\n"<<naive_suggest(pm, st, "c")<<std::endl;
 
         return 0;
     }

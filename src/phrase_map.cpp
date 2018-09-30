@@ -22,8 +22,8 @@ show_indexes(PhraseMap &pm, std::string prefix) {
     pvpi_t nq = naive_query(pm, prefix);
     pvpi_t q  = pm.query(prefix);
 
-    cout<<"naive[first] = "<<nq.first - pm.repr.begin()<<", naive[last] = "<<nq.second - pm.repr.begin()<<endl;
-    cout<<"phmap[first] = "<<q.first - pm.repr.begin()<<", phmap[last] = "<<q.second - pm.repr.begin()<<endl;
+    std::cout<<"naive[first] = "<<nq.first - pm.repr.begin()<<", naive[last] = "<<nq.second - pm.repr.begin()<<std::endl;
+    std::cout<<"phmap[first] = "<<q.first - pm.repr.begin()<<", phmap[last] = "<<q.second - pm.repr.begin()<<std::endl;
 }
 
 namespace phrase_map {
