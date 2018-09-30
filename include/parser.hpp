@@ -1,5 +1,5 @@
-#ifndef PARSER_HPP
-#define PARSER_HPP
+#ifndef LIBFACE_PARSER_HPP
+#define LIBFACE_PARSER_HPP
 
 #include <string>
 #include <iostream>
@@ -167,5 +167,4 @@ struct InputLineParser {
 
 };
 
-
-#endif // PARSER_HPP
+#endif // LIBFACE_PARSER_HPP

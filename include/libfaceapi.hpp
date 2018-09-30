@@ -1,5 +1,5 @@
-#ifndef LIBFACE_API
-#define LIBFACE_API
+#ifndef LIBFACE_LIBFACEAPI_HPP
+#define LIBFACE_LIBFACEAPI_HPP
 
 #include "segtree.hpp"
 #include "sparsetable.hpp"
@@ -31,4 +31,4 @@ class LIBFACE_DLL_EXPORTED Souffleur
     volatile bool building;
 };
 
-#endif // LIBFACE_API
+#endif // LIBFACE_LIBFACEAPI_HPP

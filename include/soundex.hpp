@@ -1,5 +1,8 @@
 // Code adapted from: http://rosettacode.org/wiki/Soundex
 
+#ifndef LIBFACE_SOUNDEX_HPP
+#define LIBFACE_SOUNDEX_HPP
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -135,3 +138,5 @@ namespace _soundex {
         return 0;
     }
 }
+
+#endif // LIBFACE_SOUNDEX_HPP

@@ -15,7 +15,6 @@
 
 using namespace std;
 
-
 struct PhraseRange {
     // first & last are both inclusive of the range. i.e. The range is
     // [first, last] and NOT [first, last)
@@ -175,4 +174,4 @@ namespace _suggest {
     }
 }
 
-#endif // LIBFACE_PHRASE_MAP_HPP
+#endif // LIBFACE_SUGGEST_HPP

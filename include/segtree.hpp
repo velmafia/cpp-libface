@@ -1,7 +1,6 @@
 #ifndef LIBFACE_SEGTREE_HPP
 #define LIBFACE_SEGTREE_HPP
 
-
 #include <iostream>
 #include <vector>
 #include <utility>

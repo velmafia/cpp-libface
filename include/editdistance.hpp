@@ -1,3 +1,6 @@
+#ifndef LIBFACE_EDITDISTANCE_HPP
+#define LIBFACE_EDITDISTANCE_HPP
+
 #include <string>
 #include <iostream>
 #include <assert.h>
@@ -99,3 +102,4 @@ namespace editdistance {
         return 0;
     }
 }
+#endif // LIBFACE_EDITDISTANCE_HPP
